@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main() {
+    char infix[100], prefix[100], stack[100];
+    int top = -1;
+
+    printf("Enter the infix expression: ");
+    scanf("%s", infix);
+
+    int i, j = 0;
+    for (i = strlen(infix) - 1; i >= 0; i--) {
+        if ((infix[i] >= 'A' && infix[i] <= 'Z') || (infix[i] >= 'a' && infix[i] <= 'z')) {
+            prefix[j] = infix[i];
+            j++;
+        } else if (infix[i] == ')') {
+            top++;
+            stack[top] = infix[i];
+        } else if (infix[i] == '(') {
+            while (top != -1 && stack[top] != ')') {
+                prefix[j] = stack[top];
+                j++;
+                top--;
+            }
+            if (top != -1 && stack[top] != ')') {
+                printf("Invalid expression");
+                return 0;
+            } else {
+                top--;
+            }
+        } else {
+            while (top != -1 && (stack[top] == '*' || stack[top] == '/' || (stack[top] == '+' || stack[top] == '-') && (infix[i] == '+' || infix[i] == '-'))) {
+                prefix[j] = stack[top];
+                j++;
+                top--;
+            }
+            top++;
+            stack[top] = infix[i];
+        }
+    }
+    while (top != -1) {
+        prefix[j] = stack[top];
+        j++;
+        top--;
+    }
+    prefix[j] = '\0';
+
+    for (i = 0; i < j / 2; i++) {
+        char temp = prefix[i];
+        prefix[i] = prefix[j - 1 - i];
+        prefix[j - 1 - i] = temp;
+    }
+
+    printf("The prefix expression is: %s\n", prefix);
+    return 0;
+}
